@@ -1,0 +1,41 @@
+name: Build
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.1'
+      - name: Build
+        run: |
+          CGO_ENABLED=0 \
+            go build -ldflags="-s"
+      - name: Get Example ID Token
+        uses: actions/github-script@v7
+        id: example_id_token
+        with:
+          script: |
+            const token = await core.getIDToken('https://example.com');
+            core.setOutput('id_token', token);
+      # dump the example id token to the job output.
+      # NB never do this is a real job because the jwt should remain secret.
+      - name: Dump Example ID Token
+        env:
+          EXAMPLE_ID_TOKEN: ${{ steps.example_id_token.outputs.id_token }}
+        run: |
+          echo $EXAMPLE_ID_TOKEN | base64
+      # validate the example id token jwt that is in the EXAMPLE_ID_TOKEN
+      # environment variable against the github actions jwks endpoint at:
+      #   https://token.actions.githubusercontent.com/.well-known/jwks
+      - name: Validate Example ID Token
+        env:
+          EXAMPLE_ID_TOKEN: ${{ steps.example_id_token.outputs.id_token }}
+        run: |
+          ./github-actions-validate-jwt EXAMPLE_ID_TOKEN
