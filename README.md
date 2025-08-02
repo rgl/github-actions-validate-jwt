@@ -4,7 +4,7 @@
 
 This validates a GitHub Actions ID Token JWT using the keys available at its JWKS endpoint.
 
-A GitHub Actions ID Token JWT is a secret string that can be used to authenticate a particular GitHub Actions Workflow Job in 3rd party services (like HashiCorp Vault or Microsoft Entra ID).
+A GitHub Actions ID Token JWT is a secret string that can be used to authenticate a particular GitHub Actions Workflow Job in 3rd party services, like HashiCorp Vault, Microsoft Entra ID, or even another GitHub Repository (when using [octo-sts/app](https://github.com/octo-sts/app) or [qoomon/actions--access-token](https://github.com/qoomon/actions--access-token)).
 
 A GitHub Actions ID Token JWT is [requested at runtime by the GitHub Actions Workflow Job to the GitHub OIDC Identity Provider](https://docs.github.com/en/actions/concepts/security/openid-connect).
 
